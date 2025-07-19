@@ -94,138 +94,157 @@ function App() {
   return (
     <AuthProvider>
       <NotificationProvider>
-        <Router>
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            
-            <main className="flex-grow">
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Landing />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                
-                {/* Protected Admin Routes */}
-                <Route 
-                  path="/admin/dashboard" 
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/users" 
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Users />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/manage-users" 
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <ManageUsers />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/manage-tasks" 
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <ManageTasks />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/settings" 
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <Settings />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/user-logs" 
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <UserLogPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/admin/task-filter" 
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <TaskFilter />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Protected User Routes */}
-                <Route 
-                  path="/user/dashboard" 
-                  element={
-                    <ProtectedRoute>
-                      <UserDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/user/userpage" 
-                  element={
-                    <ProtectedRoute>
-                      <UserPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/user/notifications" 
-                  element={
-                    <ProtectedRoute>
-                      <NotificationsPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/user/calendar" 
-                  element={
-                    <ProtectedRoute>
-                      <CalendarPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/user/profile" 
-                  element={
-                    <ProtectedRoute>
-                      <ProfilePage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/user/task-filter" 
-                  element={
-                    <ProtectedRoute>
-                      <TaskFilter />
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Fallback Route - Redirect to landing page */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
-            
-            <Footer />
-          </div>
-        </Router>
+        <AppContent />
       </NotificationProvider>
     </AuthProvider>
   );
 }
+
+function AppContent() {
+  const { user } = useAuth();
+  const isAuthenticated = !!user || !!localStorage.getItem("token");
+
+  return (
+    <Router>
+      <div className="flex flex-col min-h-screen">
+        {isAuthenticated && <Navbar />}
+
+        <main className="flex-grow">
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+
+            {/* Protected Routes */}
+            <Route 
+              path="/landing" 
+              element={
+                <ProtectedRoute>
+                  <Landing />
+                </ProtectedRoute>
+              } 
+            />
+
+            {/* Admin Routes */}
+            <Route 
+              path="/admin/dashboard" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/users" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Users />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/manage-users" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ManageUsers />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/manage-tasks" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <ManageTasks />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/settings" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <Settings />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/user-logs" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <UserLogPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/task-filter" 
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <TaskFilter />
+                </ProtectedRoute>
+              } 
+            />
+
+            {/* User Routes */}
+            <Route 
+              path="/user/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <UserDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/user/userpage" 
+              element={
+                <ProtectedRoute>
+                  <UserPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/user/notifications" 
+              element={
+                <ProtectedRoute>
+                  <NotificationsPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/user/calendar" 
+              element={
+                <ProtectedRoute>
+                  <CalendarPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/user/profile" 
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/user/task-filter" 
+              element={
+                <ProtectedRoute>
+                  <TaskFilter />
+                </ProtectedRoute>
+              } 
+            />
+
+            {/* Default Route */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </main>
+
+        {isAuthenticated && <Footer />}
+      </div>
+    </Router>
+  );
+}
+
 
 export default App;
