@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import UserSidebar from "./UserSidebar";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import TaskFilter from "../../components/tasks/TaskFilter";
 
 const UserPage = () => {
   const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState(""); // ✅ Store logged-in user
   const [newTask, setNewTask] = useState({
     title: "",
@@ -12,6 +14,7 @@ const UserPage = () => {
     priority: "Medium",
     deadline: "",
     progress: 0,
+    status: "incomplete",
   });
 
   useEffect(() => {
@@ -30,11 +33,11 @@ const UserPage = () => {
     if (!newTask.title.trim() || !newTask.description.trim()) return;
 
     const taskId = Date.now().toString();
-    
+
     // ✅ Assign task to logged-in user
-    const newTaskItem = { 
-      id: taskId, 
-      ...newTask, 
+    const newTaskItem = {
+      id: taskId,
+      ...newTask,
       assignedTo: loggedInUser // ✅ Store assigned user
     };
 
@@ -59,12 +62,19 @@ const UserPage = () => {
   // Handle Progress Update
   const updateProgress = (taskId, progress) => {
     const updatedTasks = tasks.map((task) =>
-      task.id === taskId ? { ...task, progress: parseInt(progress) } : task
+      task.id === taskId
+        ? {
+          ...task,
+          progress: parseInt(progress),
+          status: parseInt(progress) === 100 ? "complete" : "incomplete", // ✅ Auto update status
+        }
+        : task
     );
 
     setTasks(updatedTasks);
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
   };
+
 
   // Function to get priority color
   const getPriorityColor = (priority) => {
@@ -79,7 +89,7 @@ const UserPage = () => {
 
       <div className="flex-1 p-6">
         <h1 className="text-4xl font-bold mb-6 text-center w-full">
-          <span>🎯</span> 
+          <span>🎯</span>
           <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
             User Task Management
           </span>
@@ -149,12 +159,17 @@ const UserPage = () => {
           </form>
         </div>
 
+        {/* Task Filter */}
+        <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg mb-8 border border-gray-200">
+          <TaskFilter tasks={tasks} setFilteredTasks={setFilteredTasks} />
+        </div>
+
         {/* Task List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tasks.length === 0 ? (
+          {filteredTasks.length === 0 ? (
             <p className="text-gray-600">No tasks created yet. Start by adding a task!</p>
           ) : (
-            tasks.map((task) => (
+            filteredTasks.map((task) => (
               <div key={task.id} className="bg-white shadow-md p-4 rounded-md border-l-4 border-blue-400">
                 <h3 className="text-lg font-semibold">{task.title}</h3>
                 <p className="text-gray-600">{task.description}</p>
